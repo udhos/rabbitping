@@ -84,8 +84,8 @@ configMapProperties:
   INTERVAL: 10s
   TIMEOUT: 5s
   FAILURE_THRESHOLD: "6"
-  RESTART_DEPLOY: my-miniapi # change this to the name of the deployment that must be restarted upon failure
-  RESTART_NAMESPACE: default
+  RESTART_DEPLOY: my-miniapi # change this to the deployment that must be restarted upon failure
+  RESTART_NAMESPACE: miniapi # change this to the namespace of the deployment that must be restarted
   METRICS_ADDR: :3000
   METRICS_PATH: /metrics
   METRICS_NAMESPACE: ""
