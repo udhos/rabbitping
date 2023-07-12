@@ -32,7 +32,7 @@ func newMetrics(namespace string, latencyBuckets []float64) *metrics {
 		prometheus.HistogramOpts{
 			Namespace: namespace,
 			Name:      "ping_requests_seconds",
-			Help:      "Mongo ping request duration in seconds.",
+			Help:      "Ping request duration in seconds.",
 			Buckets:   latencyBuckets,
 		},
 		[]string{"outcome"},
