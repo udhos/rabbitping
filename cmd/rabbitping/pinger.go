@@ -37,7 +37,9 @@ func pinger(app *application) {
 
 		if countErrors >= app.conf.failureThreshold {
 			countErrors = 0
-			action(app.conf.restartNamespace, app.conf.restartDeploy)
+			if app.conf.restartDeploy != "" {
+				restartDeploy(app.conf.restartNamespace, app.conf.restartDeploy)
+			}
 		}
 
 		log.Printf("%s: sleeping for %v", me, app.conf.interval)
@@ -45,7 +47,7 @@ func pinger(app *application) {
 	}
 }
 
-func action(namespace, deployment string) {
+func restartDeploy(namespace, deployment string) {
 	const me = "action"
 
 	log.Printf("%s: failure threshold violated, restart namespace=%s deploy=%s",
