@@ -17,7 +17,6 @@ export TIMEOUT=5s
 export FAILURE_THRESHOLD=6
 export RESTART_DEPLOY=my-miniapi # change this to the deployment that must be restarted upon failure
 export RESTART_NAMESPACE=miniapi # change this to the namespace of the deployment that must be restarted
-export RESTART_NAMESPACE=default
 export METRICS_ADDR=:3000
 export METRICS_PATH=/metrics
 export METRICS_NAMESPACE=""
