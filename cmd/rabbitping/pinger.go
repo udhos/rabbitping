@@ -48,7 +48,7 @@ func pinger(app *application) {
 }
 
 func restartDeploy(namespace, deployment string) {
-	const me = "action"
+	const me = "restartDeploy"
 
 	log.Printf("%s: failure threshold violated, restart namespace=%s deploy=%s",
 		me, namespace, deployment)
