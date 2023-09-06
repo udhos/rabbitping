@@ -18,7 +18,7 @@ func pinger(app *application) {
 
 	for {
 		begin := time.Now()
-		_, errDial := amqpDial(app.conf.amqpURL, app.conf.timeout)
+		conn, errDial := amqpDial(app.conf.amqpURL, app.conf.timeout)
 		elap := time.Since(begin)
 
 		var outcome string
@@ -34,6 +34,13 @@ func pinger(app *application) {
 				me, elap, outcome, countErrors, app.conf.failureThreshold)
 		}
 		app.met.recordLatency(outcome, elap)
+
+		// release resources
+		if conn != nil {
+			if errClose := conn.Close(); errClose != nil {
+				log.Printf("%s: close error: %v", me, errClose)
+			}
+		}
 
 		if countErrors >= app.conf.failureThreshold {
 			countErrors = 0
