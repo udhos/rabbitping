@@ -13,7 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-const version = "1.0.4"
+const version = "1.0.5"
 
 type application struct {
 	me            string
