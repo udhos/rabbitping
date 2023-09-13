@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   rabbitping:
   - apiVersion: v2
+    appVersion: 1.0.6
+    created: "2023-09-13T13:26:33.213879672-03:00"
+    description: Install rabbitping helm chart into kubernetes.
+    digest: 7bda4b767df3afc81364c8ac5aaa93a1e8e1f33f6162e41357382f1552786f92
+    name: rabbitping
+    sources:
+    - https://github.com/udhos/rabbitping
+    type: application
+    urls:
+    - https://udhos.github.io/rabbitping/rabbitping-1.1.6.tgz
+    version: 1.1.6
+  - apiVersion: v2
     appVersion: 1.0.5
     created: "2023-09-12T20:27:14.010986135-03:00"
     description: Install rabbitping helm chart into kubernetes.
@@ -97,4 +109,4 @@ entries:
     urls:
     - https://udhos.github.io/rabbitping/rabbitping-0.1.0.tgz
     version: 0.1.0
-generated: "2023-09-12T20:27:11.941538474-03:00"
+generated: "2023-09-13T13:26:32.601360389-03:00"
