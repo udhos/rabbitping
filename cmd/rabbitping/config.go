@@ -8,7 +8,6 @@ import (
 
 type config struct {
 	amqpURL               string
-	targets               string
 	interval              time.Duration
 	timeout               time.Duration
 	failureThreshold      int
