@@ -13,7 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-const version = "1.0.10"
+const version = "1.2.0"
 
 type application struct {
 	me            string
@@ -78,7 +78,8 @@ func main() {
 		mux.Handle(app.conf.metricsPath, promhttp.Handler())
 
 		go func() {
-			log.Printf("metrics server: listening on %s %s", app.conf.metricsAddr, app.conf.metricsPath)
+			log.Printf("metrics server: listening on %s %s",
+				app.conf.metricsAddr, app.conf.metricsPath)
 			err := app.serverMetrics.ListenAndServe()
 			log.Fatalf("metrics server: exited: %v", err)
 		}()
@@ -95,12 +96,14 @@ func main() {
 			Handler: mux,
 		}
 
-		mux.HandleFunc(app.conf.healthPath, func(w http.ResponseWriter, r *http.Request) {
+		mux.HandleFunc(app.conf.healthPath, func(w http.ResponseWriter,
+			_ /*r*/ *http.Request) {
 			http.Error(w, "health ok", 200)
 		})
 
 		go func() {
-			log.Printf("health server: listening on %s %s", app.conf.healthAddr, app.conf.healthPath)
+			log.Printf("health server: listening on %s %s",
+				app.conf.healthAddr, app.conf.healthPath)
 			err := app.serverHealth.ListenAndServe()
 			log.Fatalf("health server: exited: %v", err)
 		}()
