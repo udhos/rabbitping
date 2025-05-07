@@ -16,4 +16,3 @@ echo "docker push udhos/$app:$version; docker push udhos/$app:latest" > docker-p
 chmod a+rx docker-push.sh
 echo docker-push.sh:
 cat docker-push.sh
-

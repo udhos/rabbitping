@@ -13,7 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-const version = "1.2.5"
+const version = "1.3.0"
 
 type application struct {
 	me            string
@@ -63,26 +63,33 @@ func main() {
 	}
 
 	//
-	// start metrics server
+	// metrics
 	//
 
 	{
-		app.met = newMetrics(app.conf.metricsNamespace, app.conf.metricsLatencyBuckets)
+		app.met = newMetrics(app.conf.metricsNamespace,
+			app.conf.metricsLatencyBuckets, app.conf.prometheusEnabled,
+			app.conf.dogstatsdEnabled, app.conf.dogstatsdDebug)
 
-		mux := http.NewServeMux()
-		app.serverMetrics = &http.Server{
-			Addr:    app.conf.metricsAddr,
-			Handler: mux,
+		if app.conf.prometheusEnabled {
+			//
+			// start prometheus metrics server
+			//
+			mux := http.NewServeMux()
+			app.serverMetrics = &http.Server{
+				Addr:    app.conf.metricsAddr,
+				Handler: mux,
+			}
+
+			mux.Handle(app.conf.metricsPath, promhttp.Handler())
+
+			go func() {
+				log.Printf("metrics server: listening on %s %s",
+					app.conf.metricsAddr, app.conf.metricsPath)
+				err := app.serverMetrics.ListenAndServe()
+				log.Fatalf("metrics server: exited: %v", err)
+			}()
 		}
-
-		mux.Handle(app.conf.metricsPath, promhttp.Handler())
-
-		go func() {
-			log.Printf("metrics server: listening on %s %s",
-				app.conf.metricsAddr, app.conf.metricsPath)
-			err := app.serverMetrics.ListenAndServe()
-			log.Fatalf("metrics server: exited: %v", err)
-		}()
 	}
 
 	//

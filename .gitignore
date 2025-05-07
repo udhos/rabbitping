@@ -18,8 +18,9 @@
 # vendor/
 
 # Go workspace file
-go.work
-
-tmp/
+go.work*
+tmp
 charts-tmp
 docker-push.sh
+docker-push-datadog.sh
+orchestrion.tool.go

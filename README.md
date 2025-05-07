@@ -23,6 +23,9 @@ export METRICS_NAMESPACE=""
 export METRICS_BUCKETS_LATENCY="0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, .5, 1, 2.5, 5"
 export HEALTH_ADDR=:8888
 export HEALTH_PATH=/health
+export PROMETHEUS_ENABLED=true
+export DOGSTATSD_ENABLED=true
+export DOGSTATSD_DEBUG=false
 ```
 
 # Rabbitmq
@@ -84,3 +87,15 @@ See https://udhos.github.io/rabbitping/
     helm install my-rabbitping ./charts/rabbitping --values charts/rabbitping/values.yaml
 
     helm list -A
+
+# Datadog
+
+Image tags suffixed with `-datadog` are instrumented with Datadog [Orchestrion](https://github.com/DataDog/orchestrion).
+
+See https://hub.docker.com/r/udhos/rabbitping/tags
+
+## Example
+
+Install latest image instrumented with support for Datadog:
+
+    helm upgrade --install rabbitping-dd ./charts/rabbitping --set image.tag=latest-datadog

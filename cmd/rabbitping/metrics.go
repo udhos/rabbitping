@@ -5,44 +5,76 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/udhos/dogstatsdclient/dogstatsdclient"
 )
 
 type metrics struct {
-	latency *prometheus.HistogramVec
+	latency         *prometheus.HistogramVec
+	dogstatsdClient *dogstatsdclient.Client
 }
 
-func newMetrics(namespace string, latencyBuckets []float64) *metrics {
+func newMetrics(namespace string, latencyBuckets []float64,
+	prometheusEnabled, dogstatsdEnabled, dogstatsdDebug bool) *metrics {
 	const me = "newMetrics"
 
-	//
-	// latency
-	//
+	m := &metrics{}
 
-	latency := prometheus.NewHistogramVec(
-		prometheus.HistogramOpts{
-			Namespace: namespace,
-			Name:      "ping_requests_seconds",
-			Help:      "Ping request duration in seconds.",
-			Buckets:   latencyBuckets,
-		},
-		[]string{"outcome"},
-	)
+	if prometheusEnabled {
+		//
+		// prometheus
+		//
 
-	if err := prometheus.Register(latency); err != nil {
-		log.Fatalf("%s: latency was not registered: %s", me, err)
+		latency := prometheus.NewHistogramVec(
+			prometheus.HistogramOpts{
+				Namespace: namespace,
+				Name:      "requests_seconds",
+				Help:      "Ping request duration in seconds.",
+				Buckets:   latencyBuckets,
+			},
+			[]string{"outcome"},
+		)
+
+		if err := prometheus.Register(latency); err != nil {
+			log.Fatalf("%s: latency was not registered: %s", me, err)
+		}
+
+		m.latency = latency
 	}
 
-	//
-	// all metrics
-	//
+	if dogstatsdEnabled {
+		//
+		// dogstatsd
+		//
 
-	m := &metrics{
-		latency: latency,
+		options := dogstatsdclient.Options{
+			Namespace: namespace,
+			Debug:     dogstatsdDebug,
+		}
+
+		client, errClient := dogstatsdclient.New(options)
+		if errClient != nil {
+			log.Fatalf("%s: dogstatsd client error: %s", me, errClient)
+		}
+
+		m.dogstatsdClient = client
 	}
 
 	return m
 }
 
 func (m *metrics) recordLatency(outcome string, latency time.Duration) {
-	m.latency.WithLabelValues(outcome).Observe(float64(latency) / float64(time.Second))
+	if m.latency != nil {
+		//
+		// prometheus
+		//
+		m.latency.WithLabelValues(outcome).Observe(latency.Seconds())
+	}
+	if m.dogstatsdClient != nil {
+		//
+		// dogstatsd
+		//
+		tags := []string{"outcome:" + outcome}
+		m.dogstatsdClient.TimeInMilliseconds("requests_milliseconds",
+			float64(latency.Milliseconds()), tags, 1)
+	}
 }
